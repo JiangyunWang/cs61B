@@ -109,10 +109,26 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
+        board.setViewingPerspective(side);
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
+        for (int c = 0; c < board.size(); c += 1) {
+            for (int r = 0; r < board.size(); r += 1) {
+
+                Tile t = board.tile(c, r);
+
+                if (board.tile(c, r) != null) {
+                    System.out.println(r+" , "+t.value());
+                    if (board.move(c, board.size()-1, t))  {
+                        score += t.value();
+                    }
+
+                }
+            }
+
+            changed = true;
+        }
+        System.out.println();
+
 
         checkGameOver();
         if (changed) {
@@ -138,6 +154,12 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int n = b.size();
+        for (int i=0; i<n;i++){
+            for (int j=0; j<n;j++){
+                if (b.tile(i,j)==null)  return true;
+            }
+        }
         return false;
     }
 
@@ -148,6 +170,12 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int n = b.size();
+        for (int i=0; i<n;i++){
+            for (int j=0; j<n;j++){
+                if (b.tile(i,j)!=null&&b.tile(i,j).value()==MAX_PIECE)  return true;
+            }
+        }
         return false;
     }
 
@@ -158,7 +186,16 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        if (emptySpaceExists(b)) return true;
+            int n = b.size();
+            for (int i=0; i<n;i++){
+                for (int j=0; j<n;j++){
+                    int val = b.tile(i,j).value();
+                    if (i+1<n && val==b.tile(i+1,j).value()) return true;
+                    if (j+1<n && val==b.tile(i,j+1).value()) return true;
+                }
+            }
+
         return false;
     }
 
